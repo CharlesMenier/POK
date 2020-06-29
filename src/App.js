@@ -1,24 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import 'antd/dist/antd.css';
+import './index.css';
+import axios from 'axios';
+import Pokemon from "./Pokemon";
+import {List} from "antd";
 
 function App() {
+
+  const [pokemons, setPokemons] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get('https://pokeapi.co/api/v2/pokemon?limit=999')
+        .then(response => {
+          setPokemons(response.data.results);
+          setLoading(false);
+        })
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <List
+          header={<div>Pokemon list</div>}
+          bordered
+          loading={loading}
+          dataSource={pokemons}
+          renderItem={pokemon => <Pokemon {...pokemon}/>}
+          grid={{gutter: 16, column: 4}}
+      />
     </div>
   );
 }
